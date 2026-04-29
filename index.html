@@ -1,0 +1,391 @@
+{{define "login"}}<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Title}} — Sign In</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { theme: { extend: { fontFamily: { sans: ['Roboto','sans-serif'] } } } }</script>
+    <style>
+        .md-input { transition: border-color .15s, box-shadow .15s; }
+        .md-input:focus { border-color: #7C3AED; box-shadow: inset 0 0 0 1px #7C3AED; outline: none; }
+        .md-ripple { position:relative; overflow:hidden; }
+        .md-ripple::after {
+            content:''; position:absolute; inset:0;
+            background:rgba(255,255,255,0.12); opacity:0; transition:opacity .2s;
+        }
+        .md-ripple:active::after { opacity:1; }
+    </style>
+</head>
+<body class="bg-[#F4F0FA] min-h-screen font-sans flex items-center justify-center px-4">
+<div class="w-full max-w-[400px]">
+
+    <!-- Card -->
+    <div class="bg-white rounded-[28px] shadow-[0_2px_6px_2px_rgba(0,0,0,.15),0_1px_2px_rgba(0,0,0,.3)] overflow-hidden">
+        <!-- Illustration strip -->
+        <div class="h-1.5 bg-gradient-to-r from-violet-600 via-purple-500 to-indigo-600"></div>
+
+        <div class="px-8 pt-10 pb-8">
+            <!-- Icon -->
+            <div class="w-14 h-14 rounded-full bg-violet-50 border-2 border-violet-200 flex items-center justify-center mx-auto mb-6">
+                <svg class="w-7 h-7 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75"
+                          d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                </svg>
+            </div>
+
+            <h1 class="text-[22px] font-medium text-gray-900 text-center tracking-tight">{{.Title}}</h1>
+            <p class="text-sm text-gray-500 text-center mt-1 mb-8">Enter your secret key to continue</p>
+
+            <!-- Error banner -->
+            {{if .Error}}
+            <div class="flex items-center gap-3 px-4 py-3 mb-6 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm">
+                <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                </svg>
+                <span>{{.Error}}</span>
+            </div>
+            {{end}}
+
+            <form method="POST" class="space-y-5">
+                <!-- Outlined text field -->
+                <div class="relative">
+                    <input type="password" name="secret" id="secret" autofocus placeholder=" "
+                           class="md-input peer w-full border border-gray-400 rounded-[4px] px-4 pt-5 pb-2.5
+                                  text-sm text-gray-900 bg-transparent">
+                    <label for="secret"
+                           class="absolute left-4 top-1 text-[10px] font-medium uppercase tracking-widest
+                                  text-gray-400 pointer-events-none select-none">
+                        Secret Key
+                    </label>
+                </div>
+
+                <!-- Filled button -->
+                <button type="submit"
+                        class="md-ripple w-full py-3 bg-violet-600 text-white text-sm font-medium
+                               rounded-full tracking-widest uppercase hover:bg-violet-700
+                               shadow-[0_1px_3px_1px_rgba(0,0,0,.15),0_1px_2px_rgba(0,0,0,.3)]
+                               hover:shadow-[0_2px_6px_2px_rgba(0,0,0,.15),0_1px_2px_rgba(0,0,0,.3)]
+                               active:bg-violet-800 transition-all">
+                    Sign In
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <p class="text-center text-[11px] text-gray-400 mt-6 font-medium tracking-widest uppercase">
+        Config Handler &middot; Powered by Reflect
+    </p>
+</div>
+</body>
+</html>{{end}}
+
+
+{{define "config"}}<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Title}} — Config</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { theme: { extend: { fontFamily: { sans: ['Roboto','sans-serif'], mono: ['Roboto Mono','monospace'] } } } }</script>
+    <style>
+        .md-input { transition: border-color .15s, box-shadow .15s; }
+        .md-input:focus { border-color: #7C3AED; box-shadow: inset 0 0 0 1px #7C3AED; outline: none; }
+        .md-input-err { border-color: #DC2626 !important; box-shadow: inset 0 0 0 1px #DC2626 !important; }
+        .md-ripple { position:relative; overflow:hidden; }
+        .md-ripple::after {
+            content:''; position:absolute; inset:0;
+            background:rgba(255,255,255,0.16); opacity:0; transition:opacity .2s;
+        }
+        .md-ripple:active::after { opacity:1; }
+        .md-ripple-dark::after { background:rgba(0,0,0,0.06); }
+        .field-row + .field-row { border-top: 1px solid #F3F4F6; }
+    </style>
+</head>
+<body class="bg-[#F4F0FA] min-h-screen font-sans">
+
+<!-- Top App Bar -->
+<header class="sticky top-0 z-20 bg-violet-700
+               shadow-[0_1px_3px_1px_rgba(0,0,0,.15),0_1px_2px_rgba(0,0,0,.3)]">
+    <div class="max-w-3xl mx-auto px-4 h-16 flex items-center gap-4">
+        <div class="flex-1 min-w-0">
+            <h1 class="text-lg font-medium text-white truncate">{{.Title}}</h1>
+            <p class="text-[11px] text-violet-300 -mt-0.5 tracking-wide">Configuration Panel</p>
+        </div>
+        {{if .HasAuth}}
+        <a href="?logout=1"
+           class="md-ripple md-ripple-dark flex items-center gap-2 text-sm font-medium text-violet-100
+                  hover:text-white hover:bg-violet-600 rounded-full px-4 py-2 transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+            </svg>
+            Sign Out
+        </a>
+        {{end}}
+    </div>
+</header>
+
+<!-- Content -->
+<main class="max-w-3xl mx-auto px-4 py-6 space-y-4">
+
+    <!-- Snackbar / Banner -->
+    {{if eq .Message "ok"}}
+    <div class="flex items-center gap-3 px-5 py-4 bg-[#1C1B1F] text-white text-sm rounded-[4px]
+                shadow-[0_3px_5px_-1px_rgba(0,0,0,.2),0_6px_10px_rgba(0,0,0,.14),0_1px_18px_rgba(0,0,0,.12)]">
+        <svg class="w-5 h-5 text-green-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+        </svg>
+        Configuration saved and applied successfully.
+    </div>
+    {{else if .Message}}
+    <div class="flex items-center gap-3 px-5 py-4 bg-[#1C1B1F] text-white text-sm rounded-[4px]
+                shadow-[0_3px_5px_-1px_rgba(0,0,0,.2),0_6px_10px_rgba(0,0,0,.14),0_1px_18px_rgba(0,0,0,.12)]">
+        <svg class="w-5 h-5 text-red-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+        </svg>
+        {{.Message}}
+    </div>
+    {{end}}
+
+    <!-- Fields Card -->
+    <div class="bg-white rounded-[12px] overflow-hidden
+                shadow-[0_1px_3px_1px_rgba(0,0,0,.15),0_1px_2px_rgba(0,0,0,.3)]">
+        <form method="POST">
+            {{range .Fields}}
+            <div class="field-row px-6 py-5">
+
+                <!-- Label row -->
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="text-[13px] font-medium text-gray-900 tracking-wide">{{.Name}}</span>
+                    {{if .Desc}}
+                    <span class="text-[13px] text-gray-500">— {{.Desc}}</span>
+                    {{end}}
+                    <span class="ml-auto inline-block font-mono text-[10px] uppercase tracking-widest
+                                 px-2 py-0.5 rounded-full bg-violet-50 text-violet-600 border border-violet-200
+                                 leading-4 select-none">{{.Category}}</span>
+                </div>
+
+                <!-- bool: MD Segmented Button -->
+                {{if eq .Category "bool"}}
+                <div class="inline-flex h-10 rounded-full border border-gray-400 overflow-hidden">
+                    <label class="relative cursor-pointer">
+                        <input type="radio" name="{{.Name}}" value="true"
+                               {{if eq .Value "true"}}checked{{end}} class="sr-only peer">
+                        <div class="flex items-center gap-1.5 px-6 h-10 text-sm font-medium text-gray-600
+                                    peer-checked:bg-violet-600 peer-checked:text-white transition-colors select-none">
+                            <svg class="w-3.5 h-3.5 opacity-0 peer-checked:opacity-100 -ml-1 transition-opacity"
+                                 fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            true
+                        </div>
+                    </label>
+                    <label class="relative cursor-pointer border-l border-gray-400">
+                        <input type="radio" name="{{.Name}}" value="false"
+                               {{if eq .Value "false"}}checked{{end}} class="sr-only peer">
+                        <div class="flex items-center gap-1.5 px-6 h-10 text-sm font-medium text-gray-600
+                                    peer-checked:bg-violet-600 peer-checked:text-white transition-colors select-none">
+                            <svg class="w-3.5 h-3.5 opacity-0 peer-checked:opacity-100 -ml-1 transition-opacity"
+                                 fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            false
+                        </div>
+                    </label>
+                </div>
+
+                <!-- json: outlined multiline textarea -->
+                {{else if eq .Category "json"}}
+                <div class="json-field">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <span class="text-[10px] font-mono text-gray-400 uppercase tracking-widest">JSON</span>
+                        <button type="button" onclick="formatJSON(this)"
+                                class="md-ripple md-ripple-dark text-[11px] font-medium text-violet-600 uppercase
+                                       tracking-wider px-3 py-1 rounded-full border border-violet-300
+                                       hover:bg-violet-50 transition-colors">
+                            Format
+                        </button>
+                    </div>
+                    <div class="relative">
+                        <textarea name="{{.Name}}" rows="6" spellcheck="false"
+                                  class="md-input w-full border border-gray-400 rounded-[4px] px-4 py-3
+                                         text-[13px] font-mono text-gray-900 bg-gray-50 focus:bg-white
+                                         resize-y leading-relaxed transition">{{.Value}}</textarea>
+                        <span class="json-err hidden absolute bottom-2.5 right-3 text-[11px] font-medium
+                                     text-red-600 pointer-events-none">Invalid JSON</span>
+                    </div>
+                </div>
+
+                <!-- slice: chip-based tag input -->
+                {{else if eq .Category "slice"}}
+                <div class="tag-field" data-name="{{.Name}}">
+                    <div id="tag-box-{{.Name}}"
+                         class="md-input flex flex-wrap gap-1.5 items-center px-3 py-2 border border-gray-400
+                                rounded-[4px] min-h-[44px] cursor-text bg-white transition"
+                         onclick="document.getElementById('tag-text-{{.Name}}').focus()">
+                        {{range .Items}}
+                        <span data-tag="{{.}}"
+                              class="inline-flex items-center gap-1 pl-3 pr-1.5 py-1 rounded-full
+                                     bg-violet-100 text-violet-800 text-[12px] font-medium shrink-0">
+                            {{.}}
+                            <button type="button" onclick="removeTagEl(this)"
+                                    class="w-4 h-4 flex items-center justify-center rounded-full
+                                           text-violet-500 hover:bg-violet-200 hover:text-violet-800
+                                           transition-colors text-sm leading-none font-bold">×</button>
+                        </span>
+                        {{end}}
+                        <input id="tag-text-{{.Name}}" type="text"
+                               placeholder="Type and press Enter…"
+                               class="outline-none text-sm bg-transparent flex-1 min-w-[180px] py-1
+                                      text-gray-900 placeholder-gray-400"
+                               onkeydown="handleTagKey(event,'{{.Name}}')">
+                    </div>
+                    <input type="hidden" name="{{.Name}}" id="hidden-{{.Name}}" value="{{.Value}}">
+                </div>
+
+                <!-- time.Time: datetime-local -->
+                {{else if eq .Category "time"}}
+                <input type="datetime-local" name="{{.Name}}" value="{{.Value}}"
+                       class="md-input border border-gray-400 rounded-[4px] px-4 py-3 text-sm
+                              text-gray-900 bg-transparent transition">
+
+                <!-- time.Duration: text with hint -->
+                {{else if eq .Category "duration"}}
+                <div class="relative">
+                    <input type="text" name="{{.Name}}" value="{{.Value}}"
+                           placeholder="e.g. 30s  5m  1h30m  100ms"
+                           class="md-input w-full border border-gray-400 rounded-[4px] px-4 py-3
+                                  text-sm text-gray-900 bg-transparent placeholder-gray-400
+                                  transition pr-32">
+                    <span class="absolute right-4 top-1/2 -translate-y-1/2 text-[11px] font-mono
+                                 text-gray-400 pointer-events-none select-none">ns µs ms s m h</span>
+                </div>
+
+                <!-- number / text: plain outlined input -->
+                {{else}}
+                <input type="{{.InputType}}" name="{{.Name}}" value="{{.Value}}"
+                       class="md-input w-full border border-gray-400 rounded-[4px] px-4 py-3
+                              text-sm text-gray-900 bg-transparent placeholder-gray-400 transition">
+                {{end}}
+
+            </div>
+            {{end}}
+
+            <!-- Action bar -->
+            <div class="flex items-center justify-end gap-3 px-6 py-4 bg-gray-50 border-t border-gray-100">
+                <!-- Outlined button -->
+                <button type="reset"
+                        class="md-ripple md-ripple-dark px-6 py-2.5 text-sm font-medium text-violet-700
+                               uppercase tracking-widest rounded-full border border-violet-400
+                               hover:bg-violet-50 transition-colors">
+                    Reset
+                </button>
+                <!-- Filled button -->
+                <button type="submit"
+                        class="md-ripple px-8 py-2.5 bg-violet-600 text-white text-sm font-medium
+                               uppercase tracking-widest rounded-full
+                               shadow-[0_1px_2px_rgba(0,0,0,.3),0_1px_3px_1px_rgba(0,0,0,.15)]
+                               hover:bg-violet-700
+                               hover:shadow-[0_2px_6px_2px_rgba(0,0,0,.15),0_1px_2px_rgba(0,0,0,.3)]
+                               active:bg-violet-800 transition-all">
+                    Save
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <p class="text-center text-[11px] text-gray-400 font-medium tracking-widest uppercase pb-4">
+        Config Handler &middot; Powered by Reflect
+    </p>
+</main>
+
+<script>
+// ─── Tag input ───────────────────────────────────────────────────────────────
+
+function syncHidden(name) {
+    const box = document.getElementById('tag-box-' + name);
+    const values = Array.from(box.querySelectorAll('[data-tag]')).map(el => el.dataset.tag);
+    document.getElementById('hidden-' + name).value = values.join(',');
+}
+
+function removeTagEl(btn) {
+    const chip = btn.closest('[data-tag]');
+    const name = chip.closest('.tag-field').dataset.name;
+    chip.remove();
+    syncHidden(name);
+}
+
+function addTag(name) {
+    const input = document.getElementById('tag-text-' + name);
+    const value = input.value.trim();
+    if (!value) return;
+
+    const box = document.getElementById('tag-box-' + name);
+    const chip = document.createElement('span');
+    chip.dataset.tag = value;
+    chip.className = 'inline-flex items-center gap-1 pl-3 pr-1.5 py-1 rounded-full bg-violet-100 text-violet-800 text-[12px] font-medium shrink-0';
+    chip.innerHTML =
+        escHtml(value) +
+        '<button type="button" onclick="removeTagEl(this)"' +
+        ' class="w-4 h-4 flex items-center justify-center rounded-full text-violet-500' +
+        ' hover:bg-violet-200 hover:text-violet-800 transition-colors text-sm leading-none font-bold">×</button>';
+    box.insertBefore(chip, input);
+    input.value = '';
+    syncHidden(name);
+}
+
+function handleTagKey(e, name) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        addTag(name);
+        return;
+    }
+    if (e.key === 'Backspace' && e.target.value === '') {
+        const box = document.getElementById('tag-box-' + name);
+        const chips = box.querySelectorAll('[data-tag]');
+        if (chips.length > 0) { chips[chips.length - 1].remove(); syncHidden(name); }
+    }
+}
+
+function escHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ─── JSON textarea ───────────────────────────────────────────────────────────
+
+function formatJSON(btn) {
+    const wrap = btn.closest('.json-field');
+    const ta   = wrap.querySelector('textarea');
+    const err  = wrap.querySelector('.json-err');
+    try {
+        ta.value = JSON.stringify(JSON.parse(ta.value), null, 2);
+        ta.classList.remove('md-input-err');
+        err.classList.add('hidden');
+    } catch (_) {
+        ta.classList.add('md-input-err');
+        err.classList.remove('hidden');
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.json-field textarea').forEach(ta => {
+        const err = ta.closest('.json-field').querySelector('.json-err');
+        ta.addEventListener('blur', () => {
+            try {
+                JSON.parse(ta.value);
+                ta.classList.remove('md-input-err');
+                err.classList.add('hidden');
+            } catch (_) {
+                ta.classList.add('md-input-err');
+                err.classList.remove('hidden');
+            }
+        });
+    });
+});
+</script>
+</body>
+</html>{{end}}

@@ -1,0 +1,21 @@
+host: 0.0.0.0
+port: 8023
+debug: true
+loglevel: info
+timeout: 31s
+startat: 2026-04-29T14:44:00+08:00
+allowhosts:
+    - localhost
+    - example.com
+allowports:
+    - 80
+    - 443
+    - 8080
+maxbodysize: 1048576
+ratelimit: 100
+labels:
+    env: prod
+    region: cn-north
+tls:
+    certfile: cert.pem
+    keyfile: key.pem
