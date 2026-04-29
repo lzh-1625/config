@@ -223,7 +223,7 @@ type loginData struct {
 	Error string
 }
 
-func (h *ConfigHandler[T]) renderPage(w http.ResponseWriter, r *http.Request, message string) {
+func (h *ConfigHandler[T]) renderPage(w http.ResponseWriter, _ *http.Request, message string) {
 	data := templateData{
 		Title:   h.title,
 		Fields:  h.collectFields(),
@@ -236,7 +236,7 @@ func (h *ConfigHandler[T]) renderPage(w http.ResponseWriter, r *http.Request, me
 	}
 }
 
-func (h *ConfigHandler[T]) renderLogin(w http.ResponseWriter, r *http.Request, errMsg string) {
+func (h *ConfigHandler[T]) renderLogin(w http.ResponseWriter, _ *http.Request, errMsg string) {
 	data := loginData{Title: h.title, Error: errMsg}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	if err := tmpl.ExecuteTemplate(w, "login", data); err != nil {
