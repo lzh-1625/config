@@ -166,7 +166,7 @@ func (h *ConfigHandler[T]) clearAuthCookie(w http.ResponseWriter) {
 
 func (h *ConfigHandler[T]) handleLogin(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
-		h.renderLogin(w, r, "请求错误")
+		h.renderLogin(w, r, "Bad request")
 		return
 	}
 	if r.FormValue("secret") == h.secret {
@@ -174,7 +174,7 @@ func (h *ConfigHandler[T]) handleLogin(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, r.URL.Path, http.StatusSeeOther)
 		return
 	}
-	h.renderLogin(w, r, "密钥错误，请重试")
+	h.renderLogin(w, r, "Invalid secret key, please try again")
 }
 
 // ─── File persistence ────────────────────────────────────────────────────────
@@ -248,7 +248,7 @@ func (h *ConfigHandler[T]) renderLogin(w http.ResponseWriter, r *http.Request, e
 
 func (h *ConfigHandler[T]) applyForm(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
-		h.renderPage(w, r, "表单解析失败: "+err.Error())
+		h.renderPage(w, r, "Failed to parse form: "+err.Error())
 		return
 	}
 
@@ -267,7 +267,7 @@ func (h *ConfigHandler[T]) applyForm(w http.ResponseWriter, r *http.Request) {
 
 	if h.filePath != "" {
 		if err := h.saveFile(); err != nil {
-			h.renderPage(w, r, "保存文件失败: "+err.Error())
+			h.renderPage(w, r, "Failed to save config file: "+err.Error())
 			return
 		}
 	}
