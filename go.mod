@@ -1,4 +1,4 @@
-module github.com/lzh/config
+module github.com/lzh-1625/config
 
 go 1.26.2
 

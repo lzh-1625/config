@@ -13,7 +13,7 @@ import (
 	"net/http"
 	"time"
 
-	config "github.com/lzh/config"
+	config "github.com/lzh-1625/config"
 )
 
 // TLSConfig is a nested struct; it will be rendered as an editable JSON block.
