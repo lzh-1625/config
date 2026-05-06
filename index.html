@@ -265,7 +265,14 @@
                                  text-gray-400 pointer-events-none select-none">ns µs ms s m h</span>
                 </div>
 
-                <!-- number / text: plain outlined input -->
+                <!-- text: multiline textarea (string fields) -->
+                {{else if eq .Category "text"}}
+                <textarea name="{{.Name}}" rows="2" spellcheck="false"
+                          class="md-input w-full border border-gray-400 rounded-[4px] px-4 py-3
+                                 text-sm text-gray-900 bg-transparent placeholder-gray-400
+                                 resize-y leading-relaxed min-h-[44px] transition">{{.Value}}</textarea>
+
+                <!-- number: plain outlined input -->
                 {{else}}
                 <input type="{{.InputType}}" name="{{.Name}}" value="{{.Value}}"
                        class="md-input w-full border border-gray-400 rounded-[4px] px-4 py-3

@@ -148,7 +148,7 @@ Unexported fields are always hidden regardless of their tag.
 
 | Go type | UI control |
 |---|---|
-| `string` | Text input |
+| `string` | Multiline textarea |
 | `int`, `int8` … `int64` | Number input |
 | `uint`, `uint8` … `uint64` | Number input |
 | `float32`, `float64` | Number input |
