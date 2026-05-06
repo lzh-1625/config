@@ -141,6 +141,14 @@
         </svg>
         Configuration saved and applied successfully.
     </div>
+    {{else if eq .Message "action_ok"}}
+    <div class="flex items-center gap-3 px-5 py-4 bg-[#1C1B1F] text-white text-sm rounded-[4px]
+                shadow-[0_3px_5px_-1px_rgba(0,0,0,.2),0_6px_10px_rgba(0,0,0,.14),0_1px_18px_rgba(0,0,0,.12)]">
+        <svg class="w-5 h-5 text-green-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+        </svg>
+        Action invoked successfully.
+    </div>
     {{else if .Message}}
     <div class="flex items-center gap-3 px-5 py-4 bg-[#1C1B1F] text-white text-sm rounded-[4px]
                 shadow-[0_3px_5px_-1px_rgba(0,0,0,.2),0_6px_10px_rgba(0,0,0,.14),0_1px_18px_rgba(0,0,0,.12)]">
@@ -263,6 +271,29 @@
                                   transition pr-32">
                     <span class="absolute right-4 top-1/2 -translate-y-1/2 text-[11px] font-mono
                                  text-gray-400 pointer-events-none select-none">ns µs ms s m h</span>
+                </div>
+
+                <!-- func(): invoke button (same POST as Save; only this field runs) -->
+                {{else if eq .Category "action"}}
+                <div class="flex items-center gap-3">
+                    {{if eq .Value "nil"}}
+                    <button type="button" disabled
+                            class="md-ripple px-8 py-2.5 text-sm font-medium text-gray-400 bg-gray-100
+                                   uppercase tracking-widest rounded-full border border-gray-300
+                                   cursor-not-allowed opacity-80">
+                        Invoke (nil)
+                    </button>
+                    {{else}}
+                    <button type="submit" name="config_action_call" value="{{.Name}}"
+                            class="md-ripple px-8 py-2.5 bg-violet-600 text-white text-sm font-medium
+                                   uppercase tracking-widest rounded-full
+                                   shadow-[0_1px_2px_rgba(0,0,0,.3),0_1px_3px_1px_rgba(0,0,0,.15)]
+                                   hover:bg-violet-700
+                                   hover:shadow-[0_2px_6px_2px_rgba(0,0,0,.15),0_1px_2px_rgba(0,0,0,.3)]
+                                   active:bg-violet-800 transition-all">
+                        Invoke
+                    </button>
+                    {{end}}
                 </div>
 
                 <!-- text: multiline textarea (string fields) -->

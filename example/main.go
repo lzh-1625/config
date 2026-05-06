@@ -39,7 +39,10 @@ type AppConfig struct {
 	RateLimit   float64           `config:"Maximum requests per second (0 = unlimited)"`
 	Labels      map[string]string `config:"Arbitrary key-value labels attached to every request"`
 	TLS         TLSConfig         `config:"TLS certificate configuration"`
-	internalKey string            `config:"-"` // unexported; also hidden by config:"-"
+	// OnPing is func(): the UI shows an Invoke button. Omit from JSON/YAML so
+	// WithFile persistence still works (functions are not serializable).
+	OnPing      func()         `json:"-" yaml:"-" config:"Log a ping to the server console"`
+	internalKey string         `config:"-"` // unexported; also hidden by config:"-"
 }
 
 func main() {
@@ -55,6 +58,7 @@ func main() {
 		RateLimit:   100,
 		Labels:      map[string]string{"env": "development", "region": "us-east-1"},
 		TLS:         TLSConfig{CertFile: "cert.pem", KeyFile: "key.pem"},
+		OnPing:      func() { log.Println("[config] OnPing invoked") },
 	}
 
 	// Mount the config UI at /config.

@@ -12,6 +12,7 @@ import (
 	_ "embed"
 	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"html/template"
 	"net/http"
 	"os"
@@ -37,6 +38,10 @@ var (
 const (
 	authCookieName = "cfg_auth"
 	authCookieTTL  = 86400 * 7 // 7 days
+
+	// formFieldActionCall is the submit-button name used to invoke a struct
+	// field of type func() without applying the rest of the form.
+	formFieldActionCall = "config_action_call"
 )
 
 // ─── Option pattern ──────────────────────────────────────────────────────────
@@ -252,17 +257,26 @@ func (h *ConfigHandler[T]) applyForm(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if callName := r.FormValue(formFieldActionCall); callName != "" {
+		h.invokeAction(w, r, callName)
+		return
+	}
+
 	// Snapshot before applying so hooks receive the old value.
 	oldCfg := deepCopy(h.config)
 
 	v := reflect.ValueOf(h.config).Elem()
 	t := v.Type()
 	for i := 0; i < t.NumField(); i++ {
+		sf := t.Field(i)
+		if sf.Type.Kind() == reflect.Func {
+			continue
+		}
 		fv := v.Field(i)
 		if !fv.CanSet() {
 			continue
 		}
-		setField(fv, t.Field(i).Type, r.FormValue(t.Field(i).Name))
+		setField(fv, sf.Type, r.FormValue(sf.Name))
 	}
 
 	if h.filePath != "" {
@@ -282,13 +296,54 @@ func (h *ConfigHandler[T]) applyForm(w http.ResponseWriter, r *http.Request) {
 	h.renderPage(w, r, "ok")
 }
 
+// invokeAction runs a single exported func() field by name (UI "Invoke" button).
+// It does not apply other form fields, save the config file, or run hooks.
+func (h *ConfigHandler[T]) invokeAction(w http.ResponseWriter, r *http.Request, name string) {
+	v := reflect.ValueOf(h.config).Elem()
+	t := v.Type()
+	sf, ok := t.FieldByName(name)
+	if !ok || !sf.IsExported() || sf.Tag.Get("config") == "-" {
+		h.renderPage(w, r, "Unknown or hidden field: "+name)
+		return
+	}
+	if !isZeroArgZeroRetFunc(sf.Type) {
+		h.renderPage(w, r, "Field is not func(): "+name)
+		return
+	}
+	fv := v.FieldByName(name)
+	if fv.Kind() != reflect.Func {
+		h.renderPage(w, r, "Not a function field: "+name)
+		return
+	}
+	if fv.IsNil() {
+		h.renderPage(w, r, "Function is nil: "+name)
+		return
+	}
+
+	var panicked any
+	func() {
+		defer func() { panicked = recover() }()
+		fv.Call(nil)
+	}()
+	if panicked != nil {
+		h.renderPage(w, r, fmt.Sprintf("Action panicked: %v", panicked))
+		return
+	}
+	h.renderPage(w, r, "action_ok")
+}
+
+// isZeroArgZeroRetFunc reports whether t is func() with no parameters and no results.
+func isZeroArgZeroRetFunc(t reflect.Type) bool {
+	return t.Kind() == reflect.Func && t.NumIn() == 0 && t.NumOut() == 0
+}
+
 // ─── Field collection ────────────────────────────────────────────────────────
 
 // fieldInfo describes a single config field for the template.
 type fieldInfo struct {
 	Name      string
 	Desc      string
-	Category  string   // text | number | bool | slice | time | duration | json
+	Category  string   // text | number | bool | slice | time | duration | json | action
 	InputType string   // HTML input[type] value
 	Value     string   // serialized value for scalar types
 	Items     []string // parsed items for slice type
@@ -305,6 +360,9 @@ func (h *ConfigHandler[T]) collectFields() []fieldInfo {
 			continue
 		}
 		if sf.Tag.Get("config") == "-" {
+			continue
+		}
+		if sf.Type.Kind() == reflect.Func && !isZeroArgZeroRetFunc(sf.Type) {
 			continue
 		}
 		fields = append(fields, buildFieldInfo(sf, fv))
@@ -365,6 +423,14 @@ func buildFieldInfo(sf reflect.StructField, fv reflect.Value) fieldInfo {
 		fi.Category = "number"
 		fi.InputType = "number"
 		fi.Value = strconv.FormatFloat(fv.Float(), 'f', -1, 64)
+	case reflect.Func:
+		fi.Category = "action"
+		if fv.IsNil() {
+			fi.Value = "nil"
+		} else {
+			fi.Value = "ready"
+		}
+		return fi
 	default:
 		fi.Category = "text"
 		fi.InputType = "text"
